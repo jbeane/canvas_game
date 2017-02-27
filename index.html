@@ -2,30 +2,40 @@
 <html>
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<link href="https://fonts.googleapis.com/css?family=Permanent+Marker" rel="stylesheet">
 	<style>
-	#tic-tac-toe-board {
-	  display: block;
-	  margin: 0 auto;
+	body{
+		font-family: 'Permanent Marker', cursive;
+		background: #d6d6d6;
 	}
-
+	#tic-tac-toe-board {
+		display: block;
+		margin: 0 auto;
+		background:#d6d6d6;
+	}
 	.canvas-wrapper {/*
-	  position: absolute;
-	  top: 50%;
-	  transform: translateY(-50%);
-	  width: 100%;
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 100%;
 	*/}
-
 	.canvas-wrapper-parent {
-	  transform-style: preserver-3d;
+		transform-style: preserver-3d;
+	}
+	#winner_holder {
+		text-align: center;
+		font-size: 50px;
+		display: none;
 	}
 	</style>
 </head>
 <body>
 	<script type="text/javascript" src="main.js"></script>
 	<div class="center-wrapper-parent">
-	  <div class="canvas-wrapper">
-		<canvas id="tic-tac-toe-board" class="center-v"></canvas>
-	  </div>
+		<div class="canvas-wrapper">
+			<canvas id="tic-tac-toe-board" class="center-v"></canvas>
+		</div>
+		<div id="winner_holder">Player <span id="winner_text"></span> Wins!</div>
 	</div>
 </body>
 </html>

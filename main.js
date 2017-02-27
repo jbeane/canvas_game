@@ -1,29 +1,35 @@
 'use strict';
 
-var player,lineColor,canvas,context,canvasSize,sectionSize,board,declaredWinner,squares_arr;
+var player,lineColor,canvas,context,canvasSize,sectionSize,declaredWinner,squares_arr,winner_holder,winner_text;
 
 document.addEventListener('DOMContentLoaded', startGame, false);
 
 function startGame() {
 	player = 1;
-	lineColor = "#ddd";
+	lineColor = "#333";
 	declaredWinner = false;
 	squares_arr = new Array();
+	winner_holder = document.getElementById('winner_holder');
+	winner_text = document.getElementById('winner_text');
 	canvas = document.getElementById('tic-tac-toe-board');
 	context = canvas.getContext('2d');
 
 	canvasSize = 500;
 	sectionSize = canvasSize / 3;
-	canvas.width = canvasSize;
-	canvas.height = canvasSize;
+	//canvas.width = canvasSize;
+	canvas.width = window.innerWidth;
+	//canvas.height = canvasSize;
+	canvas.height = window.innerHeight;
 	context.translate(0.5, 0.5);	
-
-	board = getInitialBoard("");
+	context.font="150px Permanent Marker";
 	drawLines(10, lineColor);
 
 	canvas.addEventListener('mouseup', function (event) {
 		if (declaredWinner) return;
-		var canvasMousePosition = getCanvasMousePosition(event);
+
+		var rect = canvas.getBoundingClientRect();
+		var canvasMousePosition = {x: event.clientX - rect.left,y: event.clientY - rect.top};
+		
 		addPlayingPiece(canvasMousePosition);
 		drawLines(10, lineColor);
 	});
@@ -40,19 +46,6 @@ function startGame() {
 	
 }
 
-
-function getInitialBoard (defaultValue) {
-	var board = [];
-	for (var x = 0;x < 3;x++) {
-		board.push([]);
-		for (var y = 0;y < 3;y++) {
-			board[x].push(defaultValue);
-		}
-	}
-	return board;
-}
-
-
 function addPlayingPiece (mouse) {
 	var xCordinate;
 	var yCordinate;
@@ -64,12 +57,20 @@ function addPlayingPiece (mouse) {
 			if (mouse.x >= xCordinate && mouse.x <= xCordinate + sectionSize && mouse.y >= yCordinate && mouse.y <= yCordinate + sectionSize) {
 				if (squares_arr[count]) return;
 				squares_arr[count] = player;
+				
+				var halfSectionSize = (0.25 * sectionSize);
+				console.log(xCordinate);
+				var centerX = xCordinate + halfSectionSize;
+				var centerY = yCordinate + halfSectionSize + 85;
+				
 				if (player === 1) {
 					player = 2;
-					drawX(xCordinate, yCordinate);
+					context.fillStyle = '#4935ef';
+					context.fillText("x",centerX,centerY);
 				} else {
 					player = 1;
-					drawO(xCordinate, yCordinate);
+					context.fillStyle = '#27d81c';
+					context.fillText("O",centerX,centerY);
 				}
 				checkWinner();
 			}
@@ -90,41 +91,18 @@ function checkWinner() {
 }
 
 function showWinner(winner){
+	var winner_name = 'X';
+	if (winner == 2) winner_name = 'O';
+	winner_text.innerHTML = winner_name;
+	winner_holder.style.display = "block";
 	console.log("player "+winner+" wins!");
 	declaredWinner = true;
-}
-
-function drawO (xCordinate, yCordinate) {
-	var halfSectionSize = (0.5 * sectionSize);
-	var centerX = xCordinate + halfSectionSize;
-	var centerY = yCordinate + halfSectionSize;
-	var radius = (sectionSize - 100) / 2;
-	var startAngle = 0 * Math.PI; 
-	var endAngle = 2 * Math.PI;
-
-	context.lineWidth = 10;
-	context.strokeStyle = "#01bBC2";
-	context.beginPath();
-	context.arc(centerX, centerY, radius, startAngle, endAngle);
-	context.stroke();
-}
-
-function drawX (xCordinate, yCordinate) {
-	context.strokeStyle = "#f1be32";
-	context.beginPath();
-	var offset = 50;
-	context.moveTo(xCordinate + offset, yCordinate + offset);
-	context.lineTo(xCordinate + sectionSize - offset, yCordinate + sectionSize - offset);
-	context.moveTo(xCordinate + offset, yCordinate + sectionSize - offset);
-	context.lineTo(xCordinate + sectionSize - offset, yCordinate + offset);
-	context.stroke();
 }
 
 function drawLines (lineWidth, strokeStyle) {
 	var lineStart = 4;
 	var lineLenght = canvasSize - 5;
 	context.lineWidth = lineWidth;
-	context.lineCap = 'round';
 	context.strokeStyle = strokeStyle;
 	context.beginPath();
 	for (var y = 1;y <= 2;y++) {  
@@ -137,10 +115,3 @@ function drawLines (lineWidth, strokeStyle) {
 	}
 	context.stroke();
 }
-
-function getCanvasMousePosition (event) {
-	var rect = canvas.getBoundingClientRect();
-
-	return {x: event.clientX - rect.left,y: event.clientY - rect.top};
-}
-
